@@ -18,7 +18,7 @@ intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-@tree.command(name = "weather", description = "gets weather from location", guild=discord.Object(id=1044380103427244033))
+@tree.command(name = "weather", description = "gets weather from location", guild=discord.Object(id=config.guildid))
 async def callcommand(interaction: discord.Interaction, city: str, country: str):
     st = time.time()
     openStreetMap = "https://nominatim.openstreetmap.org/search.php?city={}&country={}&format=jsonv2".format(city, country)
@@ -53,7 +53,7 @@ async def callcommand(interaction: discord.Interaction, city: str, country: str)
 
     await interaction.response.send_message(embed=weatherembed) #sends the stats embed
 
-@tree.command(name = "shutdown", description = "turns off the bot", guild=discord.Object(id=1044380103427244033))
+@tree.command(name = "shutdown", description = "turns off the bot", guild=discord.Object(id=config.guildid))
 async def shutdown(interaction):
     await interaction.response.send_message("Shutting down...", delete_after=2.0, ephemeral=True)
     await botexit()
@@ -62,7 +62,7 @@ async def shutdown(interaction):
 
 @client.event
 async def on_ready():
-    await tree.sync(guild=discord.Object(id=1044380103427244033))
+    await tree.sync(guild=discord.Object(id=config.guildid))
     print("Online!")
 
 client.run(config.token)
