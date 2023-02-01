@@ -5,13 +5,14 @@ import asyncio
 import config
 import time
 
-# functions I LOVE STACKOVERFLOW
+#I love stackoverflow
 def deg_to_text(deg):
     return ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"][round(deg/22.5)%16]
 
 async def botexit():
     await asyncio.sleep(5)
     exit()
+
 
 # Discord bot stuff
 intents = discord.Intents.default()
@@ -30,23 +31,28 @@ async def callcommand(interaction: discord.Interaction, city: str, country: str)
     display_name = osmJson[0]["display_name"]
     print(latitude, longitude, display_name)
 
-    url = "https://api.open-meteo.com/v1/forecast?latitude={}&longitude={}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature&daily=temperature_2m_max,temperature_2m_min&current_weather=true&windspeed_unit=mph&timezone=Europe%2FLondon".format(latitude, longitude)
+    url = "https://api.open-meteo.com/v1/forecast?latitude={}&longitude={}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature&daily=temperature_2m_max,temperature_2m_min&current_weather=true&windspeed_unit=mph&timezone=auto".format(latitude, longitude)
     response = requests.get(url)
     json = response.json()
 
     temperature = json["current_weather"]["temperature"]
     windspeed = json["current_weather"]["windspeed"]
     winddirection = json["current_weather"]["winddirection"]
-
+    localtime = json["current_weather"]["time"]
+    generationtime = json["generationtime_ms"]
+    
     print("Temperature:",temperature,"C")
     print("Wind speed:",windspeed,"mph")
     print("Wind direction:",deg_to_text(winddirection),winddirection, "degrees")
+    print(localtime)
+    print("Generation time: ",generationtime)
     
     weatherembed = discord.Embed(
     title="Current weather stats for: {}".format(display_name),
-    description="Temperature: {}C\n Wind speed: {}mph\n Wind direction: {}, {} Degrees".format(temperature, windspeed, deg_to_text(winddirection), winddirection),
+    description="**Current local time in: {}\n**{}\n\n Temperature: {}C\n Wind speed: {}mph\n Wind direction: {}, {} Degrees\n\n API Response time: {:0.2f} Seconds".format(city.capitalize(), localtime, temperature, windspeed, deg_to_text(winddirection), winddirection, generationtime),
     color=0x87CEEB
     )
+
     et = time.time()
     elapsed_time = et - st
     print('Execution time:', elapsed_time, 'seconds')
