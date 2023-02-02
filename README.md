@@ -5,7 +5,6 @@ uses https://open-meteo.com
 
 
 **requirements**
-Discord.py https://discordpy.readthedocs.io/en/stable/
 
 requests `pip install requests` or `py -m pip install`
 
