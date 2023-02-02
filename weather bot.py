@@ -4,6 +4,7 @@ from discord import app_commands
 import asyncio
 import config
 import time
+import weather_codes
 
 #I love stackoverflow
 def deg_to_text(deg):
@@ -39,20 +40,24 @@ async def callcommand(interaction: discord.Interaction, city: str, country: str)
     windspeed = json["current_weather"]["windspeed"]
     winddirection = json["current_weather"]["winddirection"]
     localtime = json["current_weather"]["time"]
+    weathercode = json["current_weather"]["weathercode"]
+    weatherdescription = weather_codes.get_weather_description(weathercode)
     generationtime = json["generationtime_ms"]
-    
+         
     print("Temperature:",temperature,"C")
     print("Wind speed:",windspeed,"mph")
     print("Wind direction:",deg_to_text(winddirection),winddirection, "degrees")
     print(localtime)
     print("Generation time: ",generationtime)
+    print(weatherdescription)
     
+
     weatherembed = discord.Embed(
     title="Current weather stats for: {}".format(display_name),
-    description="**Current local time in: {}\n**{}\n\n Temperature: {}C\n Wind speed: {}mph\n Wind direction: {}, {} Degrees\n\n API Response time: {:0.2f} Seconds".format(city.capitalize(), localtime, temperature, windspeed, deg_to_text(winddirection), winddirection, generationtime),
+    description="**Current local time in: {}\n**{}\n\n {}\nTemperature: {}C\n Wind speed: {}mph\n Wind direction: {}, {} Degrees\n\n API Response time: {:0.2f} Seconds".format(city.capitalize(), localtime, weatherdescription, temperature, windspeed, deg_to_text(winddirection), winddirection, generationtime),
     color=0x87CEEB
     )
-
+    
     et = time.time()
     elapsed_time = et - st
     print('Execution time:', elapsed_time, 'seconds')
