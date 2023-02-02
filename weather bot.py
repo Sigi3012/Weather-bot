@@ -1,6 +1,7 @@
 import requests
 import discord
 from discord import app_commands
+from discord.app_commands import Choice
 import asyncio
 import config
 import time
@@ -21,7 +22,20 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 @tree.command(name = "weather", description = "gets weather from location", guild=discord.Object(id=config.guildid))
-async def callcommand(interaction: discord.Interaction, city: str, country: str):
+
+@app_commands.describe(
+    city = "inputted city",
+    country = "inputted country",
+    unit = "Default set to Celcius" #this will be changable in a settings command sometime in the future
+)
+
+@app_commands.choices(unit = [
+    Choice(name = "Celcius", value="celcius"),
+    Choice(name = "Fahrenheit", value="fahrenheit")
+])
+
+async def callcommand(interaction: discord.Interaction, city: str, country: str, unit: str="Celcius"):
+        
     st = time.time()
     openStreetMap = "https://nominatim.openstreetmap.org/search.php?city={}&country={}&format=jsonv2".format(city, country)
     response = requests.get(openStreetMap)
@@ -43,6 +57,12 @@ async def callcommand(interaction: discord.Interaction, city: str, country: str)
     weathercode = json["current_weather"]["weathercode"]
     weatherdescription = weather_codes.get_weather_description(weathercode)
     generationtime = json["generationtime_ms"]
+    
+    if unit == "fahrenheit":
+        temperature = (temperature * 9 / 5) + 32
+        unit = "Fahrenheit"
+    else:
+        unit = "Celsius"
          
     print("Temperature:",temperature,"C")
     print("Wind speed:",windspeed,"mph")
@@ -51,10 +71,9 @@ async def callcommand(interaction: discord.Interaction, city: str, country: str)
     print("Generation time: ",generationtime)
     print(weatherdescription)
     
-
     weatherembed = discord.Embed(
     title="Current weather stats for: {}".format(display_name),
-    description="**Current local time in: {}\n**{}\n\n {}\nTemperature: {}C\n Wind speed: {}mph\n Wind direction: {}, {} Degrees\n\n API Response time: {:0.2f} Seconds".format(city.capitalize(), localtime, weatherdescription, temperature, windspeed, deg_to_text(winddirection), winddirection, generationtime),
+    description="**Current local time in: {}\n**{}\n\n {}\nTemperature: {} {}\n Wind speed: {}mph\n Wind direction: {}, {} Degrees\n\n API Response time: {:0.2f} Seconds".format(city.capitalize(), localtime, weatherdescription, temperature, unit, windspeed, deg_to_text(winddirection), winddirection, generationtime),
     color=0x87CEEB
     )
     
