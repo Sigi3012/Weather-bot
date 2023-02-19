@@ -26,10 +26,10 @@ tree = app_commands.CommandTree(client)
 @app_commands.describe(
     city = "inputted city",
     country = "inputted country",
-    unit = "Default set to Celcius" #this will be changable in a settings command sometime in the future
+    unit = "Default set to Celsius" #this will be changable in a settings command sometime in the future
 )]
 
-async def callcommand(interaction: discord.Interaction, city: str, country: str, unit: str="Celcius"):
+async def callcommand(interaction: discord.Interaction, city: str, country: str, unit: str="Celsius"):
         
     st = time.time()
     openStreetMap = "https://nominatim.openstreetmap.org/search.php?city={}&country={}&format=jsonv2".format(city, country)
