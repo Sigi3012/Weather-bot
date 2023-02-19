@@ -27,12 +27,7 @@ tree = app_commands.CommandTree(client)
     city = "inputted city",
     country = "inputted country",
     unit = "Default set to Celcius" #this will be changable in a settings command sometime in the future
-)
-
-@app_commands.choices(unit = [
-    Choice(name = "Celcius", value="celcius"),
-    Choice(name = "Fahrenheit", value="fahrenheit")
-])
+)]
 
 async def callcommand(interaction: discord.Interaction, city: str, country: str, unit: str="Celcius"):
         
@@ -58,11 +53,6 @@ async def callcommand(interaction: discord.Interaction, city: str, country: str,
     weatherdescription = weather_codes.get_weather_description(weathercode)
     generationtime = json["generationtime_ms"]
     
-    if unit == "fahrenheit":
-        temperature = (temperature * 9 / 5) + 32
-        unit = "Fahrenheit"
-    else:
-        unit = "Celsius"
          
     print("Temperature:",temperature,"C")
     print("Wind speed:",windspeed,"mph")
