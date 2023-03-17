@@ -11,11 +11,6 @@ import weather_codes
 def deg_to_text(deg):
     return ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"][round(deg/22.5)%16]
 
-async def botexit():
-    await asyncio.sleep(5)
-    exit()
-
-
 # Discord bot stuff
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -86,9 +81,8 @@ async def callcommand(interaction: discord.Interaction, city: str, country: str,
 @tree.command(name = "shutdown", description = "turns off the bot", guild=discord.Object(id=config.guildid))
 async def shutdown(interaction):
     await interaction.response.send_message("Shutting down...", delete_after=2.0, ephemeral=True)
-    await botexit()
-
-
+    await print("Bot offline")
+    await client.close()
 
 @client.event
 async def on_ready():
